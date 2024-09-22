@@ -1206,6 +1206,29 @@ bool WalletImpl::importKeyImages(const string &filename)
   return true;
 }
 
+std::string WalletImpl::exportOutputsAsString(bool all)
+{
+    if (checkBackgroundSync("cannot export outputs"))
+        return "";
+    if (m_wallet->key_on_device())
+    {
+        setStatusError(string(tr("Not supported on HW wallets.")));
+        return "";
+    }
+
+    try
+    {
+        return m_wallet->export_outputs_to_str(all);
+    }
+    catch (const std::exception &e)
+    {
+        LOG_ERROR("Error exporting outputs: " << e.what());
+        setStatusError(string(tr("Error exporting outputs: ")) + e.what());
+        return "";
+    }
+    return "";
+}
+
 bool WalletImpl::exportOutputs(const string &filename, bool all)
 {
     if (checkBackgroundSync("cannot export outputs"))
@@ -1235,6 +1258,32 @@ bool WalletImpl::exportOutputs(const string &filename, bool all)
     }
 
     LOG_PRINT_L2("Outputs exported to " << filename);
+    return true;
+}
+
+bool WalletImpl::importOutputsFromString(const std::string &data)
+{
+    if (checkBackgroundSync("cannot import outputs"))
+        return false;
+    if (m_wallet->key_on_device())
+    {
+        setStatusError(string(tr("Not supported on HW wallets.")));
+        return false;
+    }
+
+
+    try
+    {
+        size_t n_outputs = m_wallet->import_outputs_from_str(data);
+        LOG_PRINT_L2(std::to_string(n_outputs) << " outputs imported");
+    }
+    catch (const std::exception &e)
+    {
+        LOG_ERROR("Failed to import outputs: " << e.what());
+        setStatusError(string(tr("Failed to import outputs: ")) + e.what());
+        return false;
+    }
+
     return true;
 }
 

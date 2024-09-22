@@ -168,7 +168,9 @@ public:
     bool submitTransaction(const std::string &fileName) override;
     virtual UnsignedTransaction * loadUnsignedTx(const std::string &unsigned_filename) override;
     bool exportKeyImages(const std::string &filename, bool all = false) override;
+    bool importKeyImagesFromString(const std::string &data);
     bool importKeyImages(const std::string &filename) override;
+    std::string exportOutputsAsString(bool all = false); // export outputs to string for UR export
     bool exportOutputs(const std::string &filename, bool all = false) override;
     bool importOutputs(const std::string &filename) override;
     bool scanTransactions(const std::vector<std::string> &txids) override;
