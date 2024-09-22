@@ -917,6 +917,13 @@ struct Wallet
                                             PendingTransaction::Priority priority) const = 0;
 
    /*!
+    * \brief exportKeyImages - exports key images as string
+    * \param all - export all key images or only those that have not yet been exported
+    * \return                  - key images as std::string
+    */
+    virtual std::string exportKeyImagesAsString(bool all = false) = 0;
+
+   /*!
     * \brief exportKeyImages - exports key images to file
     * \param filename
     * \param all - export all key images or only those that have not yet been exported
