@@ -162,7 +162,7 @@ bool PendingTransactionImpl::commit(const std::string &filename, bool overwrite)
     return m_status == Status_Ok;
 }
 
-std::string PendingTransactionImpl::commit()
+std::string PendingTransactionImpl::commit_string()
 {
 
     std::string tx;
