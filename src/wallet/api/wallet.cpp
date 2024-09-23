@@ -1154,6 +1154,28 @@ bool WalletImpl::submitTransaction(const string &fileName) {
   return true;
 }
 
+std::string WalletImpl::exportKeyImagesAsString(bool all)
+{
+  if (m_wallet->watch_only())
+  {
+    setStatusError(tr("Wallet is view only"));
+    return "";
+  }
+  if (checkBackgroundSync("cannot export key images"))
+    return "";
+
+  try
+  {
+      return m_wallet->export_key_images_string(all);
+  }
+  catch (const std::exception &e)
+  {
+    LOG_ERROR("Error exporting key images: " << e.what());
+    setStatusError(e.what());
+    return "";
+  }
+}
+
 bool WalletImpl::exportKeyImages(const string &filename, bool all) 
 {
   if (m_wallet->watch_only())
@@ -1178,6 +1200,31 @@ bool WalletImpl::exportKeyImages(const string &filename, bool all)
     setStatusError(e.what());
     return false;
   }
+  return true;
+}
+
+bool WalletImpl::importKeyImagesFromString(std::string &data)
+{
+  if (checkBackgroundSync("cannot import key images"))
+    return false;
+  if (!trustedDaemon()) {
+    setStatusError(tr("Key images can only be imported with a trusted daemon"));
+    return false;
+  }
+  try
+  {
+    uint64_t spent = 0, unspent = 0;
+    uint64_t height = m_wallet->import_key_images_string(data, spent, unspent);
+    LOG_PRINT_L2("Signed key images imported to height " << height << ", "
+        << print_money(spent) << " spent, " << print_money(unspent) << " unspent");
+  }
+  catch (const std::exception &e)
+  {
+    LOG_ERROR("Error exporting key images: " << e.what());
+    setStatusError(string(tr("Failed to import key images: ")) + e.what());
+    return false;
+  }
+
   return true;
 }
 

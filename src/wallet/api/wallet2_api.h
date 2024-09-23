@@ -932,11 +932,11 @@ struct Wallet
     virtual bool exportKeyImages(const std::string &filename, bool all = false) = 0;
    
    /*!
-    * \brief importKeyImages - imports key images from string for UR use.
+    * \brief importKeyImagesFromString - imports key images from string for UR use.
     * \param data
     * \return                  - true on success
     */
-    virtual bool importKeyImagesFromString(const std::string &data) = 0;
+    virtual bool importKeyImagesFromString(std::string &data) = 0;
    
    /*!
     * \brief importKeyImages - imports key images from file
@@ -946,17 +946,24 @@ struct Wallet
     virtual bool importKeyImages(const std::string &filename) = 0;
 
     /*!
-     * \brief importOutputs - exports outputs to a string for UR
+     * \brief exportOutputsAsString - exports outputs to a string for UR
      * \return                  - true on success
      */
     virtual std::string exportOutputsAsString(bool all = false) = 0;
 
     /*!
-     * \brief importOutputs - exports outputs to file
+     * \brief exportOutputs - exports outputs to file
      * \param filename
      * \return                  - true on success
      */
     virtual bool exportOutputs(const std::string &filename, bool all = false) = 0;
+
+    /*!
+     * \brief importOutputsFromString - imports outputs from string for UR
+     * \param filename
+     * \return                  - true on success
+     */
+    virtual bool importOutputsFromString(const std::string &data) = 0;
 
     /*!
      * \brief importOutputs - imports outputs from file
