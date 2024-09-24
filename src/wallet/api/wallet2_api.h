@@ -163,6 +163,11 @@ struct UnsignedTransaction
     * return - true on success
     */
     virtual bool sign(const std::string &signedFileName) = 0;
+   /*!
+    * @brief sign - Sign txs and return as string
+    * return - true on success
+    */
+    virtual std::string signAsString() = 0;
 };
 
 /**
