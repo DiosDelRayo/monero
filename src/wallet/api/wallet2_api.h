@@ -950,7 +950,7 @@ struct Wallet
     * \return                  - true on success
     */
     virtual bool exportKeyImages(const std::string &filename, bool all = false) = 0;
-   
+
    /*!
     * \brief importKeyImagesFromString - imports key images from string for UR use.
     * \param data
