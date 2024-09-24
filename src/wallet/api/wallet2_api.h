@@ -898,10 +898,23 @@ struct Wallet
     virtual UnsignedTransaction * loadUnsignedTx(const std::string &unsigned_filename) = 0;
     
    /*!
+    * \brief loadUnsignedTxFromString  - creates transaction from unsigned tx string
+    * \return                - UnsignedTransaction object. caller is responsible to check UnsignedTransaction::status()
+    *                          after object returned
+    */
+    virtual UnsignedTransaction * loadUnsignedTxFromString(const std::string &unsigned_filename) = 0;
+
+   /*!
     * \brief submitTransaction - submits transaction in signed tx file
     * \return                  - true on success
     */
     virtual bool submitTransaction(const std::string &fileName) = 0;
+
+   /*!
+    * \brief submitTransactionFromString - submits transaction in signed tx file
+    * \return                  - true on success
+    */
+    virtual bool submitTransactionFromString(const std::string &fileName) = 0;
     
 
     /*!

@@ -1134,6 +1134,27 @@ UnsignedTransaction *WalletImpl::loadUnsignedTx(const std::string &unsigned_file
   return transaction;
 }
 
+UnsignedTransaction *WalletImpl::loadUnsignedTxFromString(const std::string &data) {
+  clearStatus();
+  UnsignedTransactionImpl * transaction = new UnsignedTransactionImpl(*this);
+  if (checkBackgroundSync("cannot load tx") || !m_wallet->parse_unsigned_tx_from_str(data, transaction->m_unsigned_tx_set)){
+    setStatusError(tr("Failed to load unsigned transactions"));
+    transaction->m_status = UnsignedTransaction::Status::Status_Error;
+    transaction->m_errorString = errorString();
+
+    return transaction;
+  }
+
+  // Check tx data and construct confirmation message
+  std::string extra_message;
+  if (!std::get<2>(transaction->m_unsigned_tx_set.transfers).empty())
+    extra_message = (boost::format("%u outputs to import. ") % (unsigned)std::get<2>(transaction->m_unsigned_tx_set.transfers).size()).str();
+  transaction->checkLoadedTx([&transaction](){return transaction->m_unsigned_tx_set.txes.size();}, [&transaction](size_t n)->const tools::wallet2::tx_construction_data&{return transaction->m_unsigned_tx_set.txes[n];}, extra_message);
+  setStatus(transaction->status(), transaction->errorString());
+
+  return transaction;
+}
+
 bool WalletImpl::submitTransaction(const string &fileName) {
   clearStatus();
   if (checkBackgroundSync("cannot submit tx"))
@@ -1146,6 +1167,26 @@ bool WalletImpl::submitTransaction(const string &fileName) {
     return false;
   }
   
+  if(!transaction->commit()) {
+    setStatusError(transaction->m_errorString);
+    return false;
+  }
+
+  return true;
+}
+
+bool WalletImpl::submitTransactionFromString(const string &data) {
+  clearStatus();
+  if (checkBackgroundSync("cannot submit tx"))
+    return false;
+  std::unique_ptr<PendingTransactionImpl> transaction(new PendingTransactionImpl(*this));
+
+  bool r = m_wallet->parse_tx_from_str(data, transaction->m_pending_tx, NULL);
+  if (!r) {
+    setStatus(Status_Ok, tr("Failed to load transaction from string"));
+    return false;
+  }
+
   if(!transaction->commit()) {
     setStatusError(transaction->m_errorString);
     return false;
