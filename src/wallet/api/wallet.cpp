@@ -1244,7 +1244,7 @@ bool WalletImpl::exportKeyImages(const string &filename, bool all)
   return true;
 }
 
-bool WalletImpl::importKeyImagesFromString(std::string &data)
+bool WalletImpl::importKeyImagesFromString(const std::string &data)
 {
   if (checkBackgroundSync("cannot import key images"))
     return false;

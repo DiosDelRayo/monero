@@ -13360,8 +13360,9 @@ uint64_t wallet2::import_key_images(const std::string &filename, uint64_t &spent
   return import_key_images_string(data, spent, unspent);
 }
 
-uint64_t wallet2::import_key_images_string(std::string &data, uint64_t &spent, uint64_t &unspent)
+uint64_t wallet2::import_key_images_string(const std::string &keyImages, uint64_t &spent, uint64_t &unspent)
 {
+  std::string data = keyImages;
   const size_t magiclen = strlen(KEY_IMAGE_EXPORT_FILE_MAGIC);
   if (data.size() < magiclen || memcmp(data.data(), KEY_IMAGE_EXPORT_FILE_MAGIC, magiclen))
   {

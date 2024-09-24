@@ -951,7 +951,7 @@ struct Wallet
     * \param data
     * \return                  - true on success
     */
-    virtual bool importKeyImagesFromString(std::string &data) = 0;
+    virtual bool importKeyImagesFromString(const std::string &data) = 0;
    
    /*!
     * \brief importKeyImages - imports key images from file
