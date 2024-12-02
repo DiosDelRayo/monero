@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(monero-ots VERSION 0.1.0)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Require C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,8 +29,16 @@ configure_file(
 # Main library
 add_library(monero-ots
     src/ots.cpp
-    src/ots_abi.cpp
-    src/keyjar.cpp
+	# src/ots-abi.cpp
+	src/address.cpp
+    src/key-jar.cpp
+	src/seed-jar.cpp
+	src/seed-language.cpp
+	src/seed.cpp
+	src/seed-legacy.cpp
+	src/seed-monero.cpp
+	src/seed-polyseed.cpp
+	src/wallet.cpp
 )
 
 # Add version definitions
