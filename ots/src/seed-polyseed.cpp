@@ -1,4 +1,5 @@
 #include "ots.hpp"
+#include "key-store.hpp"
 
 namespace ots {
 	std::string Polyseed::phrase(const SeedLanguage& language) const {

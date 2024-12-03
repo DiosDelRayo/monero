@@ -1,5 +1,6 @@
 #include "ots.hpp"
 #include "ots-internal.hpp"
+#include "key-store.hpp"
 #include "version.h"
 
 namespace ots {

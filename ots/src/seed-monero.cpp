@@ -1,4 +1,5 @@
 #include "ots.hpp"
+#include "key-store.hpp"
 
 namespace ots {
 	std::string MoneroSeed::phrase(const SeedLanguage& language) const {
@@ -62,7 +63,6 @@ namespace ots {
 			) {
         MoneroSeed seed;
         return seed;
-		NOT_IMPLEMENTED_YET();
 	}
 
 	MoneroSeed MoneroSeed::generate(

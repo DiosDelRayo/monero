@@ -1,4 +1,5 @@
 #include "ots.hpp"
+#include "key-store.hpp"
 #include "seed-internal.hpp"
 
 namespace ots {
@@ -17,4 +18,6 @@ namespace ots {
 			return OTS::heightFromTimestamp(m_birthday, m_network);
 		return m_height;
 	}
+
+    Seed::Seed() : m_key(std::make_unique<KeyStore>()), m_network(Network::MAIN) {};
 }
