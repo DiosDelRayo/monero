@@ -21,14 +21,6 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	uint64_t LegacySeed::birthday() const {
-		NOT_IMPLEMENTED_YET();
-	}
-
-	uint64_t LegacySeed::height() const {
-		NOT_IMPLEMENTED_YET();
-	}
-
 	LegacySeed LegacySeed::decode(
 			const std::string& phrase,
 			const SeedLanguage& language, 

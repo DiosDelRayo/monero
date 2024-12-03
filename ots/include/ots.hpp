@@ -1,17 +1,12 @@
 #pragma once
 
 #include "ots-exceptions.hpp"
-#include "version.h"
 #include <memory>
 #include <string>
 #include <vector>
 #include <array>
 #include <map>
 #include <utility>
-
-namespace crypto {
-    struct secret_key;
-}
 
 namespace ots {
 
@@ -99,7 +94,6 @@ namespace ots {
 			std::string fingerprint() const override;
 			key_handle_t storeKey(KeyJar& keyJar, const std::string& label = {}) override;
 			bool valid() const override;
-			inline bool encrypted() const override { return false; };
 			bool languageSupported(const SeedLanguage& language) const override;
 			static LegacySeed decode(
 					const std::string& phrase,
@@ -142,6 +136,12 @@ namespace ots {
 					Network network = Network::MAIN
 					);
 			static MoneroSeed create(
+                    const std::array<unsigned char, 32>& random,
+					uint64_t height = 0,
+					uint64_t time = 0, 
+					Network network = Network::MAIN
+					);
+			static MoneroSeed generate(
 					uint64_t height = 0,
 					uint64_t time = 0, 
 					Network network = Network::MAIN
@@ -194,14 +194,12 @@ namespace ots {
 	class OTS {
 		public:
 			explicit OTS();
-			inline static const std::string version() { return OTS_VERSION_STRING; };
-			inline static std::array<int, 3> versionComponents() {
-				return {OTS_VERSION_MAJOR, OTS_VERSION_MINOR, OTS_VERSION_PATCH};
-			};
-			bool validAddress(
+			static const std::string version();
+			static std::array<int, 3> versionComponents();
+			static bool validAddress(
 					const std::string& address, 
 					Network network = Network::MAIN
-					) const;
+					);
 			static uint64_t heightFromTimestamp(uint64_t timestamp, Network network = Network::MAIN);
 			static uint64_t timestampFromHeight(uint64_t height, Network network = Network::MAIN);
 	};
@@ -215,26 +213,6 @@ namespace ots {
 			bool has(const std::string& fingerprint) const;
 			std::vector<std::reference_wrapper<const Seed>> list() const;
 			static const SeedJar& instance();
-	};
-
-	class KeyJar {
-		public:
-			key_handle_t store(
-					const crypto::secret_key& key, 
-					const std::string& label = {}, 
-					Seed* seed = nullptr
-					);
-			const crypto::secret_key get(const std::string& label) const;
-			const crypto::secret_key get(const Seed& seed) const;
-			const crypto::secret_key get(key_handle_t handle) const;
-			bool has(const std::string& label) const;
-			bool has(const Seed& seed) const;
-			bool remove(key_handle_t handle);
-			const Seed& getSeed(key_handle_t handle) const;
-			const std::string& getLabel(key_handle_t handle) const;
-			Network getNetwork(key_handle_t handle) const;
-			Wallet getWallet(key_handle_t handle) const;
-			static const KeyJar& instance();
 	};
 
 	class Wallet {

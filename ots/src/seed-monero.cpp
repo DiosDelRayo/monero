@@ -55,6 +55,17 @@ namespace ots {
 	}
 
 	MoneroSeed MoneroSeed::create(
+            const std::array<unsigned char, 32>& random,
+			uint64_t height,
+			uint64_t time,
+			Network network
+			) {
+        MoneroSeed seed;
+        return seed;
+		NOT_IMPLEMENTED_YET();
+	}
+
+	MoneroSeed MoneroSeed::generate(
 			uint64_t height,
 			uint64_t time,
 			Network network

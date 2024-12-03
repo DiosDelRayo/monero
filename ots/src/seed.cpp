@@ -1,4 +1,5 @@
 #include "ots.hpp"
+#include "seed-internal.hpp"
 
 namespace ots {
 	bool Seed::languageSupported(const SeedLanguage& language) const {
