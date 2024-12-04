@@ -14,14 +14,6 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	key_handle_t LegacySeed::storeKey(KeyJar& keyJar, const std::string& label) {
-		NOT_IMPLEMENTED_YET();
-	}
-
-	bool LegacySeed::valid() const {
-		NOT_IMPLEMENTED_YET();
-	}
-
 	LegacySeed LegacySeed::decode(
 			const std::string& phrase,
 			const SeedLanguage& language, 

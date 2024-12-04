@@ -10,7 +10,7 @@
 
 /**
  * @file ots.hpp
- * @brief Offline Transaction Signing Header for the C++ library
+ * @brief Header for the C++ library
  * @see ots.h for the C ABI
  *
  * @namespace ots
@@ -45,6 +45,21 @@ namespace ots {
 	};
 
     /**
+     * @enum AddressType
+     * @brief Represents the monero address type
+     *
+     * Currently a monero address can be one of the following:
+     * - [Standard](https://docs.getmonero.org/public-address/standard-address/)
+     * - [SubAddress](https://docs.getmonero.org/public-address/subaddress/)
+     * - [Integrated Address](https://docs.getmonero.org/public-address/integrated-address/)
+     */
+    enum class AddressType {
+        Standard,
+        SubAddress,
+        Integrated
+    };
+
+    /**
      * @enum SeedType
      * @brief Represents the seed type, and is used for the different dictionaries (languages) available
      *
@@ -59,7 +74,6 @@ namespace ots {
 	// Forward declarations
 	class Seed;
 	class Wallet;
-	class KeyJar;
     class KeyStore;
 	class TxDescription;
 	class TxWarning;
@@ -202,27 +216,6 @@ namespace ots {
 			virtual std::string fingerprint() const = 0;
 
             /**
-             * @brief Stores the seed key in a key management system
-             * @param keyJar KeyJar to store the key in
-             * @param label Optional label for the stored key
-             * @return key_handle_t Handle to the stored key
-             *
-             * TODO: probably to be removed how the key will be now stored in the KeyStore
-             */
-			virtual key_handle_t storeKey(KeyJar& keyJar, const std::string& label = {}) = 0;
-
-            /**
-             * @brief Checks if the seed is valid
-             * @return bool True if the seed is valid, false otherwise
-             *
-             * TODO: should be removed how the seed should be on this point always valid
-             *       because on creating the object will be an exception thrown if invalid
-             *       if at all it would make sense to provide a static method to pre-check,
-             *       but preferable, simply remove.
-             */
-			virtual bool valid() const = 0;
-
-            /**
              * @brief Gets the seed's creation timestamp
              * @return uint64_t Seed creation timestamp
              *
@@ -258,16 +251,6 @@ namespace ots {
              * and the network - other network different keys
              */
 			virtual inline Network network() const { return m_network; };
-
-            /**
-             * @brief Checks if a specific language is supported for the seed
-             * @param language SeedLanguage to check
-             * @return bool True if the language is supported, false otherwise
-             *
-             * convinience method, calls language->isSupported(SeedType)
-             * TODO: should probably be removed
-             */
-			virtual bool languageSupported(const SeedLanguage& language) const;
 
             /**
              * @brief Creates a wallet from the seed
@@ -335,9 +318,6 @@ namespace ots {
 			std::string phrase(const SeedLanguage& language) const override;
 			std::vector<int> values() const override;
 			std::string fingerprint() const override;
-			key_handle_t storeKey(KeyJar& keyJar, const std::string& label = {}) override;
-			bool valid() const override;
-			bool languageSupported(const SeedLanguage& language) const override;
 
             /**
              * @brief Decodes a seed from a phrase
@@ -383,8 +363,6 @@ namespace ots {
 			std::string phrase(const SeedLanguage& language) const override;
 			std::vector<int> values() const override;
 			std::string fingerprint() const override;
-			key_handle_t storeKey(KeyJar& keyJar, const std::string& label = {}) override;
-			bool valid() const override;
 			bool encrypted() const override;
 			bool encrypt(const std::string& password) override;
 			bool decrypt(const std::string& password) override;
@@ -453,8 +431,6 @@ namespace ots {
 			std::string phrase(const SeedLanguage& language) const override;
 			std::vector<int> values() const override;
 			std::string fingerprint() const override;
-			key_handle_t storeKey(KeyJar& keyJar, const std::string& label = {}) override;
-			bool valid() const override;
 			bool encrypted() const override;
 			bool encrypt(const std::string& password) override;
 			bool decrypt(const std::string& password) override;
@@ -493,64 +469,171 @@ namespace ots {
 					);
 	};
 
+    /**
+     * @class Address
+     * @brief Represents a Monero address
+     *
+     * Ensures valid Monero address and some insight of the address
+     */
 	class Address {
 		public:
+            /**
+             * @brief create and check and monero address
+             * @param address the base58 encoded address
+             * @throws ots::addressInvalid if not a valid monero address
+             */
 			explicit Address(const std::string& address);
 
-			[[nodiscard]] bool isValid() const noexcept;
-			[[nodiscard]] Network network() const;
-			[[nodiscard]] std::pair<int, int> index(const Wallet& wallet) const;
+            /**
+             * @brief Get the network of the address
+             * @return the network type of the address
+             */
+			[[nodiscard]] Network network() const noexcept;
 
-			explicit operator std::string() const;
-		private:
+            /**
+             * @brief Get the type of the address
+             * @return the type of the address
+             */
+			[[nodiscard]] AddressType type() const noexcept;
+
+            /**
+             * @brief let you use the Address like it would be a std::string
+             * @return base58 address as std::string
+             */
+			explicit operator std::string() const noexcept;
+
+            /**
+             * @brief check if a given string is a valid monero address
+             * @return base58 address as std::string
+             */
+			[[nodiscard]] static bool isValid(const std::string& address) noexcept;
+		protected:
+            static Address validAddress(const std::string& address);
 			std::string m_address;
 	};
 
+    /**
+     * @class OTS
+     * @brief General functionality
+     */
 	class OTS {
 		public:
 			explicit OTS();
+
+            /**
+             * @return the version liker major.minor.patch
+             */
 			static const std::string version() noexcept;
+
+            /**
+             * @return {major, minor, patch}
+             */
 			static std::array<int, 3> versionComponents() noexcept;
-			static bool validAddress(
-					const std::string& address, 
-					Network network = Network::MAIN
-					);
+
+            /**
+             * @brief Estimates the block height of a given timestamp
+             * @param timestamp unix timestamp (epoch, seconds since 1970-01-01 00:00:00 UTC)
+             * @param network estimation is network related
+             * @return monero blockchain block height
+             */
 			static uint64_t heightFromTimestamp(uint64_t timestamp, Network network = Network::MAIN);
+
+            /**
+             * @brief Estimates the timestamp for a given block height on a network
+             * @param height monero blockchain block height
+             * @param network estimation is network related
+             * @return timestamp unix timestamp (epoch, seconds since 1970-01-01 00:00:00 UTC)
+             */
 			static uint64_t timestampFromHeight(uint64_t height, Network network = Network::MAIN);
+
+            /**
+             * @brief Random 32 bytes
+             * @return 32 random bytes
+             * @warning Entropy is depending on your device, on low entropy devices don't use this for security related purpose!
+             */
             static std::array<unsigned char, 32> random();
 	};
 
+    /**
+     * @class SeedJar
+     * @brief Storage for the Seed objects, mainly for the purpose of the C ABI
+     * @todo check if not better include in OTS
+     */
 	class SeedJar {
 		public:
-			seed_handle_t store(const Seed& seed) const;
+            /**
+             * @brief Stores a Seed object and returns a handle, to retrieve later
+             * @param seed the actual Seed object to store
+             * @return the handle to retrieve the Seed object with @see get(seed_handle_t)
+             *
+             * @note Attempt to store various times the same Seed object, results in receiving same handle,
+             *       without duplicating reference of the Seed object
+             */
+			seed_handle_t store(const Seed& seed) const noexcept;
+            
+            /**
+             * @brief retrieve a Seed object via a handle
+             * @param handle received on @see store(Seed)
+             * @return The Seed object if in the jar
+             * @throws ots::exception::seedjar::SeedNotFound if the Seed object is not in the jar
+             */
 			const Seed& get(seed_handle_t handle) const;
+
+            /**
+             * @brief retrieve a Seed object from the jar from the fingerprint of the Seed object
+             * @param fingerprint 6digit fingerprint of the Seed object
+             * @return The Seed object if in the jar
+             * @throws ots::exception::seedjar::SeedNotFound if the Seed object is not in the jar
+             */
 			const Seed& get(const std::string& fingerprint) const;
-			bool has(seed_handle_t handle) const;
+			bool has(seed_handle_t handle) const noexcept;
 			bool has(const std::string& fingerprint) const;
-			std::vector<std::reference_wrapper<const Seed>> list() const;
-			static const SeedJar& instance();
+			std::vector<std::reference_wrapper<const Seed>> list() const noexcept;
+			static const SeedJar& instance() noexcept;
 	};
 
+    /**
+     * @class Wallet
+     * @brief provides all offline wallet functionality
+     */
 	class Wallet {
 		public:
-            uint64_t height() const { return m_height; };
-			Address address(int account = 0, int index = 0) const;
-			std::vector<Address> accounts(int max = 10, int offset = 0) const;
-			std::vector<Address> subAddresses(int account = 0, int max = 10, int offset = 0) const;
-			bool hasAddress(const std::string& address) const;
-			bool hasAddress(const Address& address) const;
+
+            /**
+             * @brief The block height on creation of the wallet
+             * @return (estimated or user provided) restore block height, worst case
+             *         is 0, from the beginning of the block chain
+             * @note For the library itself meaningless, because of it's offline
+             *       character, but is important for information to the view only
+             *       wallet.
+             */
+            uint64_t height() const noexcept { return m_height; };
+
+            /**
+             * @brief Generate/lookup address in wallet
+             * @param account 0 is the default account and wallet itself
+             * @param index starting from 0 is the index of the subaddress in the account
+             * @return Standard address for account 0 and index 0 else the subaddress
+             *
+             * @todo noexcept on implementation
+             * @note Will be noexcept on implementation
+             */
+			Address address(uint32_t account = 0, uint32_t index = 0) const noexcept;
+			std::vector<Address> accounts(uint32_t max = 10, uint32_t offset = 0) const noexcept;
+			std::vector<Address> subAddresses(uint32_t account = 0, uint32_t max = 10, uint32_t offset = 0) const noexcept;
+			bool hasAddress(const std::string& address) const noexcept;
+			bool hasAddress(const Address& address) const noexcept;
 			std::pair<int, int> addressIndex(const std::string& address) const;
 			std::pair<int, int> addressIndex(const Address& address) const;
+            std::string secretViewKey() const noexcept;
+            std::string publicViewKey() const noexcept;
+            std::string secretSpendKey() const noexcept;
+            std::string publicSpendKey() const noexcept;
 			uint64_t importOutputs(const std::string& outputs);
-            std::string secretViewKey() const { return ""; /* TODO: implement */ };
-            std::string publicViewKey() const { return ""; /* TODO: implement */ };
-            std::string secretSpendKey() const { return ""; /* TODO: implement */ };
-            std::string publicSpendKey() const { return ""; /* TODO: implement */ };
-			std::string exportKeyImages() const;
-			// Transaction-related methods
+			std::string exportKeyImages() const noexcept;
 			TxDescription describeTransaction(const std::string& unsignedTransaction) const;
 			std::vector<TxWarning> checkTransaction(const std::string& unsignedTransaction) const;
-			std::vector<TxWarning> checkTransaction(const TxDescription& description) const;
+			std::vector<TxWarning> checkTransaction(const TxDescription& description) const noexcept;
 			std::string signTransaction(const std::string& unsignedTransaction) const;
 			std::string signData(const std::string& data) const;
 			bool verifyData(
@@ -558,14 +641,27 @@ namespace ots {
 					const std::string& address, 
 					const std::string& signature
 					) const;
-            Wallet(const std::array<unsigned char, 32>&, uint64_t height);
-            Wallet(const KeyStore& key, uint64_t height);
+            Wallet(const std::array<unsigned char, 32>&, uint64_t height) noexcept;
+            Wallet(const KeyStore& key, uint64_t height) noexcept;
         protected:
             std::unique_ptr<KeyStore> m_key;
             uint64_t m_height = 0;
 	};
-	// Placeholder classes for TxDescription and TxWarning
+
+    /**
+     * @class TxDescription
+     * @brief detailed information about a transaction, used to check transaction before signing
+     * @todo Figure out how to best structure - must be done during actual implementation
+     */
 	class TxDescription {};
+
+    /**
+     * @class TxWarning
+     * @brief Warnings directed to the actual user related to a transaction to be signed,
+     *        to make it easier to the application developer to help the user make informed
+     *        decissions.
+     * @todo Figure out how to best offer this kind of warnings (i18n?)
+     */
 	class TxWarning {};
 
 } // namespace ots

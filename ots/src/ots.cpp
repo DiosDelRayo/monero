@@ -15,10 +15,6 @@ namespace ots {
         return {OTS_VERSION_MAJOR, OTS_VERSION_MINOR, OTS_VERSION_PATCH};
     };
 
-    bool OTS::validAddress(const std::string& address, Network network) {
-        NOT_IMPLEMENTED_YET();
-    }
-
     uint64_t OTS::heightFromTimestamp(uint64_t timestamp, Network network) {
         NOT_IMPLEMENTED_YET();
     }

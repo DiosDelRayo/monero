@@ -1,6 +1,11 @@
 #ifndef OTS_H
 #define OTS_H
 
+/**
+ * @file ots.h
+ * @brief Header for the C ABI library
+ */
+
 #ifdef __cplusplus
 #include <memory>
 

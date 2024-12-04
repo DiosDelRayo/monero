@@ -3,25 +3,24 @@
 namespace ots {
 
 	Address::Address(const std::string& address) {
+		if(!isValid(address))
+			throw ots::exception::address::Invalid();
 		m_address = address;
 	}
 
-	bool Address::isValid() const noexcept {
+	bool Address::isValid(const std::string& address) noexcept {
 		return false; // TODO: implement
 	}
 
-	Network Address::network() const {
-		if(!isValid())
-			throw ots::exception::address::Invalid();
-		NOT_IMPLEMENTED_YET();
+	Network Address::network() const noexcept {
+		return Network::MAIN; // TODO: implement
 	}
 
-	std::pair<int, int> Address::index(const Wallet& wallet) const {
-		// return wallet->addressIndex(this);
-		NOT_IMPLEMENTED_YET();
-	}
+    AddressType Address::type() const noexcept {
+        return AddressType::Standard; // TODO: implement
+    }
 
-	Address::operator std::string() const {
+	Address::operator std::string() const noexcept {
 		return m_address;
 	}
 }

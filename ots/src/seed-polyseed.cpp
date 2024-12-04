@@ -14,14 +14,6 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	key_handle_t Polyseed::storeKey(KeyJar& keyJar, const std::string& label) {
-		NOT_IMPLEMENTED_YET();
-	}
-
-	bool Polyseed::valid() const {
-		NOT_IMPLEMENTED_YET();
-	}
-
 	bool Polyseed::encrypted() const {
 		NOT_IMPLEMENTED_YET();
 	}

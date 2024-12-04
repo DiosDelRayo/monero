@@ -14,14 +14,6 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	key_handle_t MoneroSeed::storeKey(KeyJar& keyJar, const std::string& label) {
-		NOT_IMPLEMENTED_YET();
-	}
-
-	bool MoneroSeed::valid() const {
-		NOT_IMPLEMENTED_YET();
-	}
-
 	bool MoneroSeed::encrypted() const {
 		NOT_IMPLEMENTED_YET();
 	}

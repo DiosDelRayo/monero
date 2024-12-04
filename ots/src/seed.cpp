@@ -3,10 +3,6 @@
 #include "seed-internal.hpp"
 
 namespace ots {
-	bool Seed::languageSupported(const SeedLanguage& language) const {
-		return language.supported(SeedType::Monero);
-	}
-
 	uint64_t Seed::birthday() const {
 		if(m_birthday != 0)
 			return m_birthday;

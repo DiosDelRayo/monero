@@ -1,13 +1,13 @@
 #include "ots.hpp"
+#include "key-store.hpp"
 
 namespace ots {
 
-	Address Wallet::address(int account, int index) const {
-		// return std::make_pair(0, 0);
+	Address Wallet::address(uint32_t account, uint32_t index) const noexcept {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	std::vector<Address> Wallet::accounts(int max, int offset) const {
+	std::vector<Address> Wallet::accounts(uint32_t max, uint32_t offset) const noexcept {
 		/*
 		std::vector<Address> accounts;
 		return accounts;
@@ -15,15 +15,19 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	std::vector<Address> Wallet::subAddresses(int account, int max, int offset) const {
+	std::vector<Address> Wallet::subAddresses(uint32_t account, uint32_t max, uint32_t offset) const noexcept {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	bool Wallet::hasAddress(const std::string& address) const {
-		NOT_IMPLEMENTED_YET();
+	bool Wallet::hasAddress(const std::string& address) const noexcept {
+        try {
+            return hasAddress(Address(address));
+        } catch(ots::exception::address::Invalid e) {
+            return false;
+        }
 	}
 
-	bool Wallet::hasAddress(const Address& address) const {
+	bool Wallet::hasAddress(const Address& address) const noexcept {
 		NOT_IMPLEMENTED_YET();
 	}
 
@@ -35,12 +39,27 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
+    std::string Wallet::secretViewKey() const noexcept {
+		NOT_IMPLEMENTED_YET();
+    };
+
+    std::string Wallet::publicViewKey() const noexcept {
+		NOT_IMPLEMENTED_YET();
+    };
+
+    std::string Wallet::secretSpendKey() const noexcept {
+		NOT_IMPLEMENTED_YET();
+    };
+
+    std::string Wallet::publicSpendKey() const noexcept {
+		NOT_IMPLEMENTED_YET();
+    };
 
 	uint64_t Wallet::importOutputs(const std::string& outputs) {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	std::string Wallet::exportKeyImages() const {
+	std::string Wallet::exportKeyImages() const noexcept {
 		NOT_IMPLEMENTED_YET();
 	}
 
@@ -55,7 +74,7 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	std::vector<TxWarning> Wallet::checkTransaction(const TxDescription& description) const {
+	std::vector<TxWarning> Wallet::checkTransaction(const TxDescription& description) const noexcept {
 		NOT_IMPLEMENTED_YET();
 	}
 
@@ -76,4 +95,12 @@ namespace ots {
 		) const {
 		NOT_IMPLEMENTED_YET();
 	}
+
+    Wallet::Wallet(const std::array<unsigned char, 32>& key, uint64_t height) noexcept :
+        m_key(std::make_unique<KeyStore>(KeyStore(key))),
+        m_height(height) {}
+
+    Wallet::Wallet(const KeyStore& key, uint64_t height) noexcept :
+        m_key(std::make_unique<KeyStore>(key)),
+        m_height(height) {}
 }
