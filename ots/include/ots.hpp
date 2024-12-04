@@ -509,8 +509,8 @@ namespace ots {
 	class OTS {
 		public:
 			explicit OTS();
-			static const std::string version();
-			static std::array<int, 3> versionComponents();
+			static const std::string version() noexcept;
+			static std::array<int, 3> versionComponents() noexcept;
 			static bool validAddress(
 					const std::string& address, 
 					Network network = Network::MAIN

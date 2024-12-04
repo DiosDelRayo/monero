@@ -1,8 +1,6 @@
 #ifndef OTS_H
 #define OTS_H
 
-#include "version.h"
-
 #ifdef __cplusplus
 #include <memory>
 
@@ -34,19 +32,12 @@ extern "C" {
 	} ots_result_t;
 
 	// Create context with specific version
-	ots_result_t ots_create_context(ots_version_t version);
+	ots_result_t ots_create_context();
+    // destroy context
+    void ots_free_context(ots_result_t* result);
 
-	// Core functionality with versioning
-	typedef struct {
-	    uint8_t* spend_key;
-	    ots_error_t error;
-	} ots_keys_result_t;
-
-	ots_keys_result_t seed_to_keys(ots_result_t* ctx, const char* seed_phrase);
-
-	// Memory management
-	void ots_free_keys_result(ots_keys_result_t* result);
-	void ots_free_context(ots_result_t* result);
+    char* ots_version();
+    int* ots_version_components();
 
 #ifdef __cplusplus
     }
