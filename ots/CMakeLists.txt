@@ -1,3 +1,4 @@
+# TODO: include polyseed into src
 cmake_minimum_required(VERSION 3.10)
 project(monero-ots VERSION 0.1.0)
 
@@ -26,6 +27,28 @@ configure_file(
 	${CMAKE_CURRENT_BINARY_DIR}/include/version.h
 )
 
+# TODO: this will drag more and more dependencies inside
+#	check how to include boost into the lib, check how
+#	check how to get rid of easylogging
+#	also check how to get rid of storage, net in epee itself
+set(EPEE_SOURCES
+	${MONERO_SOURCE_DIR}/contrib/epee/src/mlocker.cpp
+	${MONERO_SOURCE_DIR}/contrib/epee/src/hex.cpp
+	${MONERO_SOURCE_DIR}/contrib/epee/src/string_tools.cpp
+	${MONERO_SOURCE_DIR}/contrib/epee/src/misc_language.cpp
+	${MONERO_SOURCE_DIR}/contrib/epee/src/file_io_utils.cpp
+	${MONERO_SOURCE_DIR}/contrib/epee/src/memwipe.c
+	${MONERO_SOURCE_DIR}/contrib/epee/src/wipeable_string.cpp
+)
+
+# TODO: epee and dependencies are needed
+set(MONERO_SOURCES
+	${MONERO_SOURCE_DIR}/src/crypto/crypto.cpp
+	${MONERO_SOURCE_DIR}/src/crypto/hash.c
+	${MONERO_SOURCE_DIR}/src/crypto/random.c
+	${MONERO_SOURCE_DIR}/src/mnemonics/electrum-words.cpp
+)
+
 # Main library
 add_library(monero-ots
 	src/ots.cpp
@@ -38,6 +61,8 @@ add_library(monero-ots
 	src/seed-monero.cpp
 	src/seed-polyseed.cpp
 	src/wallet.cpp
+	# ${EPEE_SOURCES} # solve later with implementation, first finish ABI
+	# ${MONERO_SOURCES} # solve later with implementation, first finish ABI
 )
 
 # Add version definitions

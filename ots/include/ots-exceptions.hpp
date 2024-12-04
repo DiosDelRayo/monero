@@ -13,24 +13,24 @@ namespace ots {
 	namespace exception {
 		class RuntimeError: std::runtime_error {
 			public:
-				inline RuntimeError(const std::string& msg): std::runtime_error(msg) {};
+				inline explicit RuntimeError(const std::string& msg): std::runtime_error(msg) {};
 		};
 		class InvalidArgument: std::invalid_argument {
 			public:
-				inline InvalidArgument(const std::string& msg): std::invalid_argument(msg) {};
+				inline explicit InvalidArgument(const std::string& msg): std::invalid_argument(msg) {};
 		};
 		class OutOfRange: std::out_of_range {
 			public:
-				inline OutOfRange(const std::string& msg): std::out_of_range(msg) {};
+				inline explicit OutOfRange(const std::string& msg): std::out_of_range(msg) {};
 		};
 		class NotImplementedYet: std::logic_error {
 			public:
 				inline NotImplementedYet(): std::logic_error("Not implemented yet") {};
-				inline NotImplementedYet(const std::string& msg): std::logic_error(std::string("Not implemented yet: ") + msg) {};
+				inline explicit NotImplementedYet(const std::string& msg): std::logic_error(std::string("Not implemented yet: ") + msg) {};
 		};
 		class DomainError: std::domain_error {
 			public:
-				inline DomainError(const std::string& msg): std::domain_error(msg) {};
+				inline explicit DomainError(const std::string& msg): std::domain_error(msg) {};
 		};
 		namespace seed {
 			class NoDefaultLanguageSet: DomainError {

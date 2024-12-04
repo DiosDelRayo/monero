@@ -517,6 +517,7 @@ namespace ots {
 					);
 			static uint64_t heightFromTimestamp(uint64_t timestamp, Network network = Network::MAIN);
 			static uint64_t timestampFromHeight(uint64_t height, Network network = Network::MAIN);
+            static std::array<unsigned char, 32> random();
 	};
 
 	class SeedJar {
@@ -541,10 +542,10 @@ namespace ots {
 			std::pair<int, int> addressIndex(const std::string& address) const;
 			std::pair<int, int> addressIndex(const Address& address) const;
 			uint64_t importOutputs(const std::string& outputs);
-            std::string secretViewKey(bool confirmUnsecureOp = false) const { return ""; /* TODO: implement */ };
-            std::string publicViewKey(bool confirmUnsecureOp = false) const { return ""; /* TODO: implement */ };
-            std::string secretSpendKey(bool confirmUnsecureOp = false) const { return ""; /* TODO: implement */ };
-            std::string publicSpendKey(bool confirmUnsecureOp = false) const { return ""; /* TODO: implement */ };
+            std::string secretViewKey() const { return ""; /* TODO: implement */ };
+            std::string publicViewKey() const { return ""; /* TODO: implement */ };
+            std::string secretSpendKey() const { return ""; /* TODO: implement */ };
+            std::string publicSpendKey() const { return ""; /* TODO: implement */ };
 			std::string exportKeyImages() const;
 			// Transaction-related methods
 			TxDescription describeTransaction(const std::string& unsignedTransaction) const;
