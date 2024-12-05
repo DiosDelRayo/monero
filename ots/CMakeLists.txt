@@ -148,6 +148,7 @@ if(DOXYGEN_FOUND)
 	set(DOXYGEN_INPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/manual")
 	set(DOXYGEN_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs")
 	set(DOXYGEN_CCS "${CMAKE_CURRENT_SOURCE_DIR}/manual/doxygen-awesome.css ${CMAKE_CURRENT_SOURCE_DIR}/manual/doxygen-awesome-sidebar-only.css")
+	set(DOXYGEN_MD_MAINPAGE "${CMAKE_CURRENT_SOURCE_DIR}/manual/index.md")
 
 	# Configure the Doxyfile
 	configure_file(

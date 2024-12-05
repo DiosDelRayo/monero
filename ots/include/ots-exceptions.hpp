@@ -146,6 +146,26 @@ namespace ots {
 				public:
 					inline AddressNotFound(): OutOfRange("Address not found in wallet") {};
 			};
+
+            /**
+             * @class ImportOutputs
+             * @brief Import outputs failed
+             */
+            class ImportOutputs: InvalidArgument {
+				public:
+					inline explicit ImportOutputs(): InvalidArgument("Import outputs failed") {};
+					inline explicit ImportOutputs(const std::string& msg): InvalidArgument(msg) {};
+            };
+
+            /**
+             * @class ExportKeyImages
+             * @brief export key images failed
+             */
+            class ExportKeyImages: DomainError {
+				public:
+					inline explicit ExportKeyImages(): DomainError("Import outputs failed") {};
+					inline explicit ExportKeyImages(const std::string& msg): DomainError(msg) {};
+            };
 		}
 
         /**
@@ -153,6 +173,16 @@ namespace ots {
          * @brief All exceptions related Transactions in ots::Wallet, ots::TxWarning, ots::TxDescription
          */
 		namespace tx {
+
+            /**
+             * @class Invalid
+             * @brief the provided unsigned transaction is not valid
+             */
+            class Invalid: InvalidArgument {
+				public:
+					inline explicit Invalid(): InvalidArgument("Transaction is invalid") {};
+					inline explicit Invalid(const std::string& msg): InvalidArgument(msg) {};
+            };
 		}
 
         /**

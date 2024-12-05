@@ -31,11 +31,11 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	std::pair<int, int> Wallet::addressIndex(const std::string& address) const {
+	std::pair<uint32_t, uint32_t> Wallet::addressIndex(const std::string& address) const {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	std::pair<int, int> Wallet::addressIndex(const Address& address) const {
+	std::pair<uint32_t, uint32_t> Wallet::addressIndex(const Address& address) const {
 		NOT_IMPLEMENTED_YET();
 	}
 
@@ -59,7 +59,7 @@ namespace ots {
 		NOT_IMPLEMENTED_YET();
 	}
 
-	std::string Wallet::exportKeyImages() const noexcept {
+	std::string Wallet::exportKeyImages() const {
 		NOT_IMPLEMENTED_YET();
 	}
 
@@ -84,7 +84,7 @@ namespace ots {
 	}
 
 
-	std::string Wallet::signData(const std::string& data) const {
+	std::string Wallet::signData(const std::string& data) const noexcept {
 		NOT_IMPLEMENTED_YET();
 	}
 

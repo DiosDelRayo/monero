@@ -614,34 +614,164 @@ namespace ots {
              * @param account 0 is the default account and wallet itself
              * @param index starting from 0 is the index of the subaddress in the account
              * @return Standard address for account 0 and index 0 else the subaddress
-             *
-             * @todo noexcept on implementation
-             * @note Will be noexcept on implementation
              */
 			Address address(uint32_t account = 0, uint32_t index = 0) const noexcept;
+
+            /**
+             * @brief Gives a list of accounts (e.g. for a address browser)
+             * @param max maximum entries returned, which should be always be return, except if index + max < max(uint32_t)
+             * @param offset first account to return
+             * @return the list of the addresses which represent the account (subaddress index 0)
+             * @see https://docs.getmonero.org/public-address/subaddress
+             */
 			std::vector<Address> accounts(uint32_t max = 10, uint32_t offset = 0) const noexcept;
+
+            /**
+             * @brief Gives a list of subaddresses for a given account
+             * @param account index of the account, 0 is the wallet itself
+             * @param max maximum entries returned, which should be always be return, except if index + max < max(uint32_t)
+             * @param offset first subindex to return
+             * @return the list of the addresses which represent subaddresses of the account (subaddress index 0 is the account itself)
+             */
 			std::vector<Address> subAddresses(uint32_t account = 0, uint32_t max = 10, uint32_t offset = 0) const noexcept;
+
+            /**
+             * @brief check if the address string is a valid monero address and then if the address belongs to the wallet
+             * @param address the string containing supposingly a monero address
+             * @return false if the address is not valid or not belong to the wallet, otherwise true
+             */
 			bool hasAddress(const std::string& address) const noexcept;
+
+            /**
+             * @brief check if the address belongs to the wallet
+             * @param address the monero address
+             * @return true if the address belongs to the wallet
+             */
 			bool hasAddress(const Address& address) const noexcept;
-			std::pair<int, int> addressIndex(const std::string& address) const;
-			std::pair<int, int> addressIndex(const Address& address) const;
+
+            /**
+             * @brief check if the address string is a valid monero address and give the account and subindex
+             * @param address the string containing supposingly a monero address
+             * @throws ots::exception::address::Invalid if the address is not valid
+             * @throws ots::exception::wallet::AddressNotFound if the address is not in the wallet
+             * @return first number is the account, second number the index
+             */
+			std::pair<uint32_t, uint32_t> addressIndex(const std::string& address) const;
+
+            /**
+             * @brief get the account and subindex of a address in the wallet
+             * @param address the string containing supposingly a monero address
+             * @throws ots::exception::address::Invalid if the address is not valid
+             * @throws ots::exception::wallet::AddressNotFound if the address is not in the wallet
+             * @return first number is the account, second number the index
+             */
+			std::pair<uint32_t, uint32_t> addressIndex(const Address& address) const;
+
+            /**
+             * @brief The Secret View Key
+             * @return the wallet secret view key
+             */
             std::string secretViewKey() const noexcept;
+
+            /**
+             * @brief The Public View Key
+             * @return the wallet public view key
+             */
             std::string publicViewKey() const noexcept;
+
+            /**
+             * @brief The Secret Spend Key
+             * @return the wallet secret spend key
+             */
             std::string secretSpendKey() const noexcept;
+
+            /**
+             * @brief The Public Spend Key
+             * @return the wallet public spend key
+             */
             std::string publicSpendKey() const noexcept;
+
+            /**
+             * @brief import the output, previous exported from the view only wallet
+             * @return count of imported outputs
+             * @throws ots::exception::wallet::ImportOutputs if provides outputs are not valid
+             * @note the outputs are needed to export the key images @see Wallet::importOutputs()
+             */
 			uint64_t importOutputs(const std::string& outputs);
-			std::string exportKeyImages() const noexcept;
+
+            /**
+             * @brief export key images after outputs are imported
+             * @return key images for the provided outputs
+             * @throws ots::exception::wallet::ExportKeyImages if there are no key images, probably because no outputs are imported
+             * @note the key images are needed by the view only wallet to create an unsigned transaction
+             */
+			std::string exportKeyImages() const;
+
+            /**
+             * @brief Gives a whole picture of the unsigned transaction
+             * @param unsignedTransaction unsigned transaction string
+             * @throws ots::exception::tx::Invalid if the provided transaction is invalid
+             * @return a Transaction Description
+             */
 			TxDescription describeTransaction(const std::string& unsignedTransaction) const;
+
+            /**
+             * @brief Gives a warnings if any for the unsigned transaction
+             * @param unsignedTransaction unsigned transaction string
+             * @throws ots::exception::tx::Invalid if the provided transaction is invalid
+             * @return a list of warnings
+             */
 			std::vector<TxWarning> checkTransaction(const std::string& unsignedTransaction) const;
+
+            /**
+             * @brief Gives a warnings if any for the unsigned transaction
+             * @param description Transaction Description object
+             * @return a list of warnings
+             */
 			std::vector<TxWarning> checkTransaction(const TxDescription& description) const noexcept;
+
+            /**
+             * @brief Sign a provided unsigned transaction
+             * @param unsignedTransaction unsigned transaction string
+             * @throws ots::exception::tx::Invalid if the provided transaction is invalid
+             * @return a signed transaction
+             */
 			std::string signTransaction(const std::string& unsignedTransaction) const;
-			std::string signData(const std::string& data) const;
+
+            /**
+             * @brief Sign a provided string
+             * @param data String of the message to sign
+             * @return signature of the message
+             */
+			std::string signData(const std::string& data) const noexcept;
+
+            /**
+             * @brief Verify a signed message
+             * @param data String of the message to sign
+             * @param address Monero address as string
+             * @param signature the provided signature for the message
+             * @throws ots::exception::address::Invalid if the address is not valid
+             * @return true if the signature is valid
+             */
 			bool verifyData(
 					const std::string& data, 
 					const std::string& address, 
 					const std::string& signature
 					) const;
-            Wallet(const std::array<unsigned char, 32>&, uint64_t height) noexcept;
+
+            /**
+             * @brief Create a offline Wallet from a secret key
+             * @param key provided as insecure std::array, will be stored in the keystore, make sure to wike the provided variable after creating the Wallet
+             * @param height restore height of the wallet
+             */
+            Wallet(const std::array<unsigned char, 32>& key, uint64_t height) noexcept;
+
+            /**
+             * @brief Create a offline Wallet from a secret key
+             * @param key provide the key via a secret key Storage
+             * @param height restore height of the wallet
+             * @internal Only for internal use how KeyStore is not publicly declared
+             */
             Wallet(const KeyStore& key, uint64_t height) noexcept;
         protected:
             std::unique_ptr<KeyStore> m_key;
